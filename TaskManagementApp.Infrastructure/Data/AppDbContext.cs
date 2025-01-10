@@ -14,5 +14,14 @@ namespace TaskManagementApp.Infrastructure.Data
 
         public DbSet<UserTask> UserTasks { get; set; }
         public DbSet<User> Users { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserTask>()
+                .HasOne(ut => ut.User)
+                .WithMany(u => u.UserTasks)
+                .HasForeignKey(ut => ut.UserId);
+        }
+
     }
 }
