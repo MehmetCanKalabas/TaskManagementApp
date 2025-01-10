@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementApp.Core", "T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementApp.Infrastructure", "TaskManagementApp.Infrastructure\TaskManagementApp.Infrastructure.csproj", "{D07E5AA7-7248-4985-8186-982C3907ED64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementApp.API", "TaskManagementApp.API\TaskManagementApp.API.csproj", "{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManagementApp.API", "TaskManagementApp.API\TaskManagementApp.API.csproj", "{9848E922-FE96-4AB4-AB07-6909AA766864}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +27,10 @@ Global
 		{D07E5AA7-7248-4985-8186-982C3907ED64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D07E5AA7-7248-4985-8186-982C3907ED64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D07E5AA7-7248-4985-8186-982C3907ED64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9848E922-FE96-4AB4-AB07-6909AA766864}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9848E922-FE96-4AB4-AB07-6909AA766864}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9848E922-FE96-4AB4-AB07-6909AA766864}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9848E922-FE96-4AB4-AB07-6909AA766864}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,6 +38,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{B78069F5-AA37-4816-A025-0B2F7DD15700} = {BF3F9A06-B8F5-4CC4-BD52-EAF5FFC7D480}
 		{D07E5AA7-7248-4985-8186-982C3907ED64} = {BF3F9A06-B8F5-4CC4-BD52-EAF5FFC7D480}
-		{4CF9F71C-12C8-4CB8-A581-45ADD87DC50D} = {BF3F9A06-B8F5-4CC4-BD52-EAF5FFC7D480}
+		{9848E922-FE96-4AB4-AB07-6909AA766864} = {BF3F9A06-B8F5-4CC4-BD52-EAF5FFC7D480}
 	EndGlobalSection
 EndGlobal
