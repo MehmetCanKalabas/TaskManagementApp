@@ -14,11 +14,15 @@ namespace TaskManagementApp.API.Controllers
     {
         private readonly IRepository<User> _repository;
         private readonly IValidator<User> _validator;
+        private readonly IUserRepository _userRepository;
+        private readonly JwtHelper _jwtHelper;
 
-        public UserController(IRepository<User> repository, IValidator<User> validator)
+        public UserController(IRepository<User> repository, IValidator<User> validator, IUserRepository userRepository, JwtHelper jwtHelper)
         {
+            _jwtHelper = jwtHelper;
             _repository = repository;
             _validator = validator;
+            _userRepository = userRepository;
         }
 
         // POST api/users/register
@@ -32,11 +36,9 @@ namespace TaskManagementApp.API.Controllers
             var validationResult = await _validator.ValidateAsync(user);
             if (!validationResult.IsValid)
             {
-                // Hatalıysa, hata mesajları ile birlikte dönebiliriz
                 return BadRequest(validationResult.Errors);
             }
 
-            // Eğer doğrulama başarılıysa, kullanıcıyı veritabanına ekle
             await _repository.AddAsync(user);
             return Ok(user);
         }
@@ -46,18 +48,15 @@ namespace TaskManagementApp.API.Controllers
         {
             var user = await _userRepository.GetUserByIdentityNumberAsync(loginDto.IdentityNumber);
 
-            if (user == null)
+            if (user == null || user.Password != loginDto.Password)
             {
                 return Unauthorized("Invalid credentials.");
             }
 
-            if (user.Password != loginDto.Password)
-            {
-                // Şifre yanlış
-                return Unauthorized("Invalid credentials.");
-            }
+            // JWT token oluşturuyoruz
+            var token = _jwtHelper.GenerateToken(user);
 
-            return Ok("Login successful");
+            return Ok(new { Token = token });
         }
     }
 

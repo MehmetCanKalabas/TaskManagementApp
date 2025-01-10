@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskManagementApp.Core.Entities;
 using TaskManagementApp.Core.Interfaces;
 
@@ -9,28 +11,40 @@ namespace TaskManagement.API.Controllers
     [ApiController]
     public class TasksController : ControllerBase
     {
-        private readonly IRepository<UserTask> _taskRepository;
+        private readonly IRepository<UserTask> _repository;
         private readonly IValidator<UserTask> _taskValidator;
-
-        public TasksController(IRepository<UserTask> taskRepository, IValidator<UserTask> taskValidator)
+        private readonly ITaskRepository _taskRepository;
+            
+        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository)
         {
-            _taskRepository = taskRepository;
+            _repository = repository;
             _taskValidator = taskValidator;
+            _taskRepository = taskRepository;
         }
 
         // GET api/tasks
+        //[Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var tasks = await _taskRepository.GetAllAsync();
-            return Ok(tasks);
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            if (userRole == "Admin")
+            {
+                var result = await _repository.GetAllAsync();
+                return Ok(result);
+            }
+
+            var tasksForUser = await _taskRepository.GetTasksForUserAsync(userId);
+            return Ok(tasksForUser);
         }
 
         // GET api/tasks/5
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            var task = await _taskRepository.GetByIdAsync(id);
+            var task = await _repository.GetByIdAsync(id);
             if (task == null)
                 return NotFound();
             return Ok(task);
@@ -43,14 +57,13 @@ namespace TaskManagement.API.Controllers
             if (task == null)
                 return BadRequest("Task data is required.");
 
-            // Kullanıcı görevini doğrula
             var validationResult = await _taskValidator.ValidateAsync(task);
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
             }
 
-            await _taskRepository.AddAsync(task);
+            await _repository.AddAsync(task);
             return CreatedAtAction(nameof(Get), new { id = task.Id }, task);
         }
 
@@ -58,34 +71,42 @@ namespace TaskManagement.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromBody] UserTask task)
         {
-            if (task == null || task.Id != id)
-                return BadRequest();
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
-            var existingTask = await _taskRepository.GetByIdAsync(id);
+            var existingTask = await _repository.GetByIdAsync(id);
             if (existingTask == null)
                 return NotFound();
 
-            // Kullanıcı görevini doğrula
-            var validationResult = await _taskValidator.ValidateAsync(task);
-            if (!validationResult.IsValid)
+            // Admin rolü kontrolü
+            if (userRole != "Admin" && existingTask.UserId != userId)
             {
-                return BadRequest(validationResult.Errors);
+                return Unauthorized(); // Admin olmayan kullanıcı sadece kendi görevini güncelleyebilir
             }
 
-            await _taskRepository.UpdateAsync(task);
+            await _repository.UpdateAsync(task);
             return NoContent();
         }
 
-        // DELETE api/tasks/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var task = await _taskRepository.GetByIdAsync(id);
-            if (task == null)
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            var existingTask = await _repository.GetByIdAsync(id);
+            if (existingTask == null)
                 return NotFound();
 
-            await _taskRepository.DeleteAsync(id);
+            // Admin rolü kontrolü
+            if (userRole != "Admin" && existingTask.UserId != userId)
+            {
+                return Unauthorized(); // Admin olmayan kullanıcı sadece kendi görevini silebilir
+            }
+
+            await _repository.DeleteAsync(id);
             return NoContent();
         }
+
     }
 }

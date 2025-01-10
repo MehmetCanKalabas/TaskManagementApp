@@ -7,8 +7,9 @@ using TaskManagementApp.Core.Entities;
 
 namespace TaskManagementApp.Core.Interfaces
 {
-    public interface IUserRepository
+    public interface ITaskRepository
     {
-        Task<User> GetUserByIdentityNumberAsync(string identityNumber);
+        Task<IEnumerable<UserTask>> GetTasksForUserAsync(string userId);
+
     }
 }
