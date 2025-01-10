@@ -33,12 +33,13 @@ builder.Services.AddSingleton<JwtHelper>();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", builder =>
+    options.AddPolicy("AllowAll", builder =>
+    {
         builder.AllowAnyOrigin()
                .AllowAnyMethod()
-               .AllowAnyHeader());
+               .AllowAnyHeader();
+    });
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,7 +51,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<JwtMiddleware>();
 
-app.UseCors("AllowAllOrigins");
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

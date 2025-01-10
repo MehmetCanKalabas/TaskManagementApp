@@ -25,7 +25,7 @@ namespace TaskManagement.API.Controllers
         // GET api/tasks
         //[Authorize]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetAllTasks()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
@@ -41,8 +41,9 @@ namespace TaskManagement.API.Controllers
         }
 
         // GET api/tasks/5
+        //İsteğe bağlı kullanım
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var task = await _repository.GetByIdAsync(id);
             if (task == null)
@@ -52,7 +53,7 @@ namespace TaskManagement.API.Controllers
 
         // POST api/tasks
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] UserTask task)
+        public async Task<IActionResult> CreateTask([FromBody] UserTask task)
         {
             if (task == null)
                 return BadRequest("Task data is required.");
@@ -64,12 +65,12 @@ namespace TaskManagement.API.Controllers
             }
 
             await _repository.AddAsync(task);
-            return CreatedAtAction(nameof(Get), new { id = task.Id }, task);
+            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }
 
         // PUT api/tasks/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] UserTask task)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] UserTask task)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
@@ -89,7 +90,7 @@ namespace TaskManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteTask(int id)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
