@@ -14,9 +14,10 @@ Görev Yönetimi Uygulaması, kullanıcıların görevlerini oluşturabilecekler
 - **Frontend**: React.js
 - **Veritabanı**: SQL Server
 - **Loglama** : SeriLog
-- **Kimlik Doğrulama**: JWT (JSON Web Token) ve Identity Kontrolü
+- **Kimlik Doğrulama**: JWT (JSON Web Token) ve Identity Kontrol
 - **Veritabanı Yönetimi**: Entity Framework Core
 - **API**: RESTful API
+- **Mimari** : N-Tier Architecture
 
 ## Kurulum
 Proje, iki ayrı klasörde çalışan frontend ve backend ile yapılandırılmıştır. Aşağıdaki adımları takip ederek projeyi bilgisayarınızda çalıştırabilirsiniz.
