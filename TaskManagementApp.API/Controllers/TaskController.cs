@@ -14,12 +14,14 @@ namespace TaskManagement.API.Controllers
         private readonly IRepository<UserTask> _repository;
         private readonly IValidator<UserTask> _taskValidator;
         private readonly ITaskRepository _taskRepository;
-            
-        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository)
+        private readonly ILogger<TasksController> _logger;
+
+        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository, ILogger<TasksController> logger)
         {
             _repository = repository;
             _taskValidator = taskValidator;
             _taskRepository = taskRepository;
+            _logger = logger;
         }
 
         // GET api/tasks
@@ -32,10 +34,12 @@ namespace TaskManagement.API.Controllers
 
             if (userRole == "Admin")
             {
+                _logger.LogInformation("Admin Listed All Tasks.");
                 var result = await _repository.GetAllAsync();
                 return Ok(result);
             }
 
+            _logger.LogInformation($"{userId} : User Listed All Tasks.");
             var tasksForUser = await _taskRepository.GetTasksForUserAsync(userId);
             return Ok(tasksForUser);
         }
@@ -65,6 +69,7 @@ namespace TaskManagement.API.Controllers
             }
 
             await _repository.AddAsync(task);
+            _logger.LogInformation($"{task.Id} : User Created.");
             return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }
 

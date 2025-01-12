@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using TaskManagement.API.Controllers;
 using TaskManagementApp.Core.DTOs;
 using TaskManagementApp.Core.Entities;
 using TaskManagementApp.Core.Interfaces;
@@ -18,14 +19,16 @@ namespace TaskManagementApp.API.Controllers
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly JwtHelper _jwtHelper;
+        private readonly ILogger<UserController> _logger;
 
-        public UserController(IRepository<User> repository, IValidator<User> validator, IUserRepository userRepository, JwtHelper jwtHelper, IUserService userService)
+        public UserController(IRepository<User> repository, IValidator<User> validator, IUserRepository userRepository, JwtHelper jwtHelper, IUserService userService, ILogger<UserController> logger)
         {
             _jwtHelper = jwtHelper;
             _repository = repository;
             _validator = validator;
             _userRepository = userRepository;
             _userService = userService;
+            _logger = logger;
         }
 
         // POST api/user/register
@@ -45,6 +48,7 @@ namespace TaskManagementApp.API.Controllers
                 return BadRequest(validationResult.Errors);
             }
 
+            _logger.LogInformation("User Registered.");
             return Ok("User registered successfully.");
         }
 

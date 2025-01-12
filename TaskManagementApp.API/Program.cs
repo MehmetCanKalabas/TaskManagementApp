@@ -6,11 +6,19 @@ using TaskManagementApp.Infrastructure.Repositories;
 using TaskManagementApp.Infrastructure.JWT;
 using FluentValidation;
 using TaskManagementApp.Infrastructure.Services;
+using Serilog;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 
@@ -61,6 +69,7 @@ app.UseAuthentication();
 app.UseMiddleware<JwtMiddleware>();
 
 app.UseAuthorization();
+app.UseSerilogRequestLogging();
 
 app.MapControllers();
 
