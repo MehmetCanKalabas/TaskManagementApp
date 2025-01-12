@@ -7,6 +7,7 @@ using TaskManagementApp.Core.Entities;
 using TaskManagementApp.Core.Interfaces;
 using TaskManagementApp.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace TaskManagementApp.Infrastructure.Repositories
 {
@@ -28,8 +29,13 @@ namespace TaskManagementApp.Infrastructure.Repositories
         public async Task<IEnumerable<UserTask>> GetTasksForUserAsync(string userId)
         {
             return await _context.UserTasks
-                .Where(task => task.UserId == userId)  // Kullanıcının ID'sine göre filtreleme
+                .Where(task => task.UserId == userId)
                 .ToListAsync();
+        }
+
+        public async Task<bool> ExistsAsync(Expression<Func<User, bool>> predicate)
+        {
+            return await _context.Users.AnyAsync(predicate);
         }
 
     }

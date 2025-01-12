@@ -5,6 +5,7 @@ using TaskManagementApp.Infrastructure.Data;
 using TaskManagementApp.Infrastructure.Repositories;
 using TaskManagementApp.Infrastructure.JWT;
 using FluentValidation;
+using TaskManagementApp.Infrastructure.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<JwtHelper>();
 
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
