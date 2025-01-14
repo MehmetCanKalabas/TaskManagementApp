@@ -9,6 +9,7 @@ namespace TaskManagement.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly IRepository<UserTask> _repository;
@@ -26,6 +27,7 @@ namespace TaskManagement.API.Controllers
 
         // GET api/tasks
         //[Authorize]
+        //[AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetAllTasks()
         {
