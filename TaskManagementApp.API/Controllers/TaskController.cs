@@ -9,21 +9,18 @@ using TaskManagementApp.Infrastructure.Services;
 
 namespace TaskManagement.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly IRepository<UserTask> _repository;
-        private readonly IValidator<UserTask> _taskValidator;
         private readonly ITaskRepository _taskRepository;
         private readonly ILogger<TasksController> _logger;
         private readonly IUserTaskService _userTaskService;
 
-        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository, ILogger<TasksController> logger, IUserTaskService userTaskService)
+        public TasksController(IRepository<UserTask> repository, ITaskRepository taskRepository, ILogger<TasksController> logger, IUserTaskService userTaskService)
         {
             _repository = repository;
-            _taskValidator = taskValidator;
             _taskRepository = taskRepository;
             _logger = logger;
             _userTaskService = userTaskService;
@@ -36,6 +33,12 @@ namespace TaskManagement.API.Controllers
         public async Task<IActionResult> GetAllTasks()
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (String.IsNullOrWhiteSpace(userId))
+            {
+                return NotFound("User Not Found.");
+            }
+
             var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
 
             if (userRole == "Admin")

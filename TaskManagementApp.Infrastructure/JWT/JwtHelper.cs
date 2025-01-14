@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using TaskManagementApp.Core.Entities;
 using TaskManagementApp.Infrastructure.JWT;
 
@@ -11,6 +10,7 @@ public class JwtHelper
 {
     private readonly JwtSettings _jwtSettings;
 
+    // IOptions<JwtSettings> kullanarak, JwtSettings'i DI ile alıyoruz
     public JwtHelper(IOptions<JwtSettings> jwtSettings)
     {
         _jwtSettings = jwtSettings.Value;
@@ -61,18 +61,15 @@ public class JwtHelper
         }
         catch (SecurityTokenExpiredException)
         {
-            // Token süresi dolmuş
-            throw new UnauthorizedAccessException("Token süresi dolmuş.");
+            throw new UnauthorizedAccessException("Token expired.");
         }
         catch (SecurityTokenException)
         {
-            // Token geçersiz
-            throw new UnauthorizedAccessException("Geçersiz token.");
+            throw new UnauthorizedAccessException("Invalid token.");
         }
         catch (Exception)
         {
-            // Diğer hatalar
-            throw new UnauthorizedAccessException("Token doğrulama hatası.");
+            throw new UnauthorizedAccessException("Token validation failed.");
         }
     }
 }

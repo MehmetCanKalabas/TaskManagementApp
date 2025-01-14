@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,23 +12,19 @@ using TaskManagementApp.Infrastructure.Services;
 
 namespace TaskManagementApp.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
-    [EnableCors("AllowAll")]
+    //[EnableCors("AllowAll")]
     public class UserController : ControllerBase
     {
-        private readonly IRepository<User> _repository;
-        private readonly IValidator<User> _validator;
         private readonly IUserRepository _userRepository;
         private readonly IUserService _userService;
         private readonly JwtHelper _jwtHelper;
         private readonly ILogger<UserController> _logger;
 
-        public UserController(IRepository<User> repository, IValidator<User> validator, IUserRepository userRepository, JwtHelper jwtHelper, IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, JwtHelper jwtHelper, IUserService userService, ILogger<UserController> logger)
         {
             _jwtHelper = jwtHelper;
-            _repository = repository;
-            _validator = validator;
             _userRepository = userRepository;
             _userService = userService;
             _logger = logger;
@@ -69,6 +66,13 @@ namespace TaskManagementApp.API.Controllers
             var token = _jwtHelper.GenerateToken(user);
 
             return Ok(new { Token = token });
+        }
+
+        [Authorize]
+        [HttpGet("secure-endpoint")]
+        public IActionResult SecureEndpoint()
+        {
+            return Ok("Bu endpoint'e sadece yetkili kullanıcılar erişebilir.");
         }
     }
 
