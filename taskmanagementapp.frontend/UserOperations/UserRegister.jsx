@@ -9,6 +9,8 @@ const RegisterForm = () => {
         password: '',
         role: 'User'
     });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -20,20 +22,25 @@ const RegisterForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(null); // Reset error before submitting
 
         try {
-            const response = await axios.post('http://localhost:5000/api/user/register', user);
+            const response = await axios.post('http://localhost:7267/api/User/register', user);
             alert('User registered successfully');
             console.log(response.data);
         } catch (error) {
-            alert('Error occurred while registering the user');
+            setError('Error occurred while registering the user');
             console.error(error);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <div>
-            <h2>Register User</h2>
+            <h2>Kullanici Olustur</h2>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Name</label>
@@ -87,7 +94,9 @@ const RegisterForm = () => {
                         <option value="Admin">Admin</option>
                     </select>
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? 'Registering...' : 'Register'}
+                </button>
             </form>
         </div>
     );

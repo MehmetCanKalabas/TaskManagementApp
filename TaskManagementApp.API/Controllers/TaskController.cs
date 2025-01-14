@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using TaskManagementApp.Core.DTOs;
 using TaskManagementApp.Core.Entities;
 using TaskManagementApp.Core.Interfaces;
+using TaskManagementApp.Infrastructure.Services;
 
 namespace TaskManagement.API.Controllers
 {
@@ -16,13 +18,15 @@ namespace TaskManagement.API.Controllers
         private readonly IValidator<UserTask> _taskValidator;
         private readonly ITaskRepository _taskRepository;
         private readonly ILogger<TasksController> _logger;
+        private readonly IUserTaskService _userTaskService;
 
-        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository, ILogger<TasksController> logger)
+        public TasksController(IRepository<UserTask> repository, IValidator<UserTask> taskValidator, ITaskRepository taskRepository, ILogger<TasksController> logger, IUserTaskService userTaskService)
         {
             _repository = repository;
             _taskValidator = taskValidator;
             _taskRepository = taskRepository;
             _logger = logger;
+            _userTaskService = userTaskService;
         }
 
         // GET api/tasks
@@ -54,30 +58,32 @@ namespace TaskManagement.API.Controllers
             var task = await _repository.GetByIdAsync(id);
             if (task == null)
                 return NotFound();
+
             return Ok(task);
         }
 
         // POST api/tasks
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] UserTask task)
+        public async Task<IActionResult> CreateTask([FromBody] UserTaskRegisterDto task)
         {
             if (task == null)
                 return BadRequest("Task data is required.");
 
-            var validationResult = await _taskValidator.ValidateAsync(task);
+            var validationResult = await _userTaskService.RegisterUserAsync(task);
+
             if (!validationResult.IsValid)
             {
                 return BadRequest(validationResult.Errors);
             }
 
-            await _repository.AddAsync(task);
-            _logger.LogInformation($"{task.Id} : User Created.");
-            return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
+            _logger.LogInformation($"{task.Title} : User Task Created.");
+
+            return Ok(task);
         }
 
         // PUT api/tasks/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] UserTask task)
+        public async Task<IActionResult> UpdateTask(int id, [FromBody] UserTaskUpdateDto task)
         {
             var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
@@ -92,7 +98,7 @@ namespace TaskManagement.API.Controllers
                 return Unauthorized(); // Admin olmayan kullanıcı sadece kendi görevini güncelleyebilir
             }
 
-            await _repository.UpdateAsync(task);
+            await _userTaskService.UpdateUserAsync(task);
             return NoContent();
         }
 

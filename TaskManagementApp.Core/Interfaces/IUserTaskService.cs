@@ -9,7 +9,7 @@ namespace TaskManagementApp.Core.Interfaces
 {
     public interface IUserTaskService
     {
-        Task<FluentValidation.Results.ValidationResult> RegisterUserAsync(UserTaskDto user);
-
+        Task<FluentValidation.Results.ValidationResult> RegisterUserAsync(UserTaskRegisterDto user);
+        Task<FluentValidation.Results.ValidationResult> UpdateUserAsync(UserTaskUpdateDto userTaskUpdateDto);
     }
 }

@@ -20,15 +20,36 @@ namespace TaskManagementApp.Infrastructure.Services
             _validator = validator;
             _repository = repository;
         }
-        public async Task<FluentValidation.Results.ValidationResult> RegisterUserAsync(UserTaskDto userTaskDto)
+        public async Task<FluentValidation.Results.ValidationResult> RegisterUserAsync(UserTaskRegisterDto userTaskDto)
         {
             var userTask = new UserTask
             {
                 Title = userTaskDto.Title,
                 Description = userTaskDto.Description,
                 CreatedDate = userTaskDto.CreatedDate,
-                UpdatedDate = userTaskDto.UpdatedDate,
-                IsCompleted = userTaskDto.IsCompleted,              
+                IsCompleted = userTaskDto.IsCompleted,
+            };
+
+            var validationResult = await _validator.ValidateAsync(userTask);
+
+            if (!validationResult.IsValid)
+            {
+                return validationResult;
+            }
+
+            await _repository.AddAsync(userTask);
+
+            return new FluentValidation.Results.ValidationResult();
+        }
+
+        public async Task<FluentValidation.Results.ValidationResult> UpdateUserAsync(UserTaskUpdateDto userTaskUpdateDto)
+        {
+            var userTask = new UserTask
+            {
+                Title = userTaskUpdateDto.Title,
+                Description = userTaskUpdateDto.Description,
+                UpdatedDate = userTaskUpdateDto.UpdatedDate,
+                IsCompleted = userTaskUpdateDto.IsCompleted,
             };
 
             var validationResult = await _validator.ValidateAsync(userTask);
@@ -37,7 +58,7 @@ namespace TaskManagementApp.Infrastructure.Services
                 return validationResult;
             }
 
-            await _repository.AddAsync(userTask);
+            await _repository.UpdateAsync(userTask);
 
             return validationResult;
         }
