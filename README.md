@@ -5,7 +5,6 @@ Görev Yönetimi Uygulaması, kullanıcıların görevlerini oluşturabilecekler
 
 # Özellikler
 - Kullanıcılar görevlerini oluşturabilir, düzenleyebilir ve silebilir.
-- Yöneticiler, kullanıcıları görev atamaları yapabilir.
 - Kullanıcılar görevlerinin durumunu güncelleyebilir (tamamlandı, devam ediyor vb.).
 - JWT tabanlı güvenli giriş işlemleri.
 - RESTful API ile frontend ve backend arasında haberleşme.
@@ -14,9 +13,11 @@ Görev Yönetimi Uygulaması, kullanıcıların görevlerini oluşturabilecekler
 - **Backend**: .NET 7 (ASP.NET Core)
 - **Frontend**: React.js
 - **Veritabanı**: SQL Server
-- **Kimlik Doğrulama**: JWT (JSON Web Token)
+- **Loglama** : SeriLog
+- **Kimlik Doğrulama**: JWT (JSON Web Token) ve Identity Kontrol
 - **Veritabanı Yönetimi**: Entity Framework Core
 - **API**: RESTful API
+- **Mimari** : N-Tier Architecture
 
 ## Kurulum
 Proje, iki ayrı klasörde çalışan frontend ve backend ile yapılandırılmıştır. Aşağıdaki adımları takip ederek projeyi bilgisayarınızda çalıştırabilirsiniz.
